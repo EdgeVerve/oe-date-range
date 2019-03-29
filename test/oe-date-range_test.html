@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>oe-date-range test</title>
+
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../node_modules/@polymer/test-fixture/test-fixture.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
+  <script src="../node_modules/wct-mocha/wct-mocha.js"></script>
+
+  
+
+  <script type="module" src="../oe-date-range.js"></script>
+</head>
+
+<body>
+  <test-fixture id="simple">
+    <template>
+      <oe-date-range></oe-date-range>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="basic">
+    <template>
+      <oe-date-range label="Range" start-date="06/03/2010" end-date="02/12/2009"></oe-date-range>
+    </template>
+  </test-fixture>
+  <test-fixture id="date">
+    <template>
+      <oe-date-range label="Range"></oe-date-range>
+    </template>
+  </test-fixture>
+
+  <script type="module">
+    import '@polymer/iron-test-helpers/mock-interactions';
+    import {forceXIfStamp} from '@polymer/iron-test-helpers/test-helpers';
+    suite('<oe-date-range>', function () {
+      var element;
+      setup(function(done){
+        element = fixture('simple');
+        flush(function(){
+          done();
+        })
+      })
+
+       test('click(), opens the dialog box showing current month by default', function (done) {
+        var cal = element.shadowRoot.querySelector('paper-icon-button#cal');
+        cal.click();
+        expect(element.$._dialog.opened).to.equal(true);
+        var now = new Date();
+        expect(element.$._dialog.querySelector('div').querySelector('oe-date-range-picker').month.number).to.equal(now.getMonth());
+        expect(element.$._dialog.querySelector('div').querySelector('oe-date-range-picker').month.year).to.equal(now.getFullYear());
+        done();
+      });
+      test('Valid date range is set', function () {
+        var cal = element.shadowRoot.querySelector('paper-icon-button#cal');
+        cal.click();
+        expect(element.$._dialog.opened).to.equal(true);
+        element.set('startDate','02/12/2009');
+        element.set('endDate','06/03/2010');
+        element.$.okBtn.click();
+        element._validate();
+        expect(element.validate()).to.equal(true);
+      });
+     
+    });
+    suite('<oe-date-range> invalid date',function(){
+      var element;
+      setup(function(done){
+        element = fixture('basic');
+        flush(function(){
+          done();
+        })
+      })
+      test('start date is greater throws an error', function () {
+        var cal = element.shadowRoot.querySelector('paper-icon-button#cal');
+        cal.click();
+        expect(element.$._dialog.opened).to.equal(true);
+        element._validate();
+        expect(element.errorMessage).to.equal('End date should be greater');
+        
+      });
+      test('Error when invalid date is set', function () {
+        var cal = element.shadowRoot.querySelector('paper-icon-button#cal');
+        cal.click();
+        expect(element.$._dialog.opened).to.equal(true);
+        element.set('startDate','13/03/2009');
+        element.set('endDate','12/03/2010');
+        expect(element.errorMessage).to.equal('Invalid Start Date');
+      });
+     
+    });
+    suite('<oe-date-range> Two dates required',function(){
+      var element;
+      setup(function(done){
+        element = fixture('date');
+        flush(function(){
+          done();
+        })
+      })
+      test('Start Date alone selected ok button is disabled', function () {
+        var cal = element.shadowRoot.querySelector('paper-icon-button#cal');
+        cal.click();
+        expect(element.$._dialog.opened).to.equal(true);
+        element.set('startDate','02/12/2009');
+        expect(element.$.okBtn.disabled).to.equal(true);
+        
+      });
+    });
+   
+  </script>
+</body>
+
+</html>

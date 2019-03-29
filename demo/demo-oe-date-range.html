@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>oe-date-range</title>
+
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+
+  <script type="module">
+      import '@polymer/iron-demo-helpers/demo-pages-shared-styles'; 
+      import '@polymer/iron-demo-helpers/demo-snippet'; 
+      import '@polymer/polymer/lib/elements/dom-bind';
+      import '@polymer/polymer/lib/elements/custom-style';
+      import 'oe-input/oe-input';
+    </script>
+  <script type="module" src="../oe-date-range.js"></script>
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .vertical-section-container {
+        max-width: 600px;
+      }
+    </style>
+  </custom-style>
+</head>
+
+<body>
+  <div class="vertical-section-container centered">
+    <h3>Oe date range Element</h3>
+    <demo-snippet>
+      <template>
+        <custom-style>
+          <style>
+          #demo-1{
+            --start-date-input:{
+              width:100px;
+            }
+            --end-date-input:{
+              width:100px;
+            }
+            --iron-icon-seperator:{
+            padding-right: 30px;
+            padding-left: 30px;
+          }
+          }
+          </style>
+        </custom-style>
+        <oe-date-range id='demo-1'></oe-date-range>
+      </template>
+    </demo-snippet>
+
+    
+  </div>
+  <div class="vertical-section-container centered">
+    <h3>Oe date range Element with label</h3>
+    <demo-snippet>
+      <template>
+          <custom-style>
+              <style>
+              #demo-2{
+                --start-date-input:{
+                  width:100px;
+                }
+                --end-date-input:{
+                  width:100px;
+                }
+                --iron-icon-seperator:{
+                padding-right: 30px;
+                padding-left: 30px;
+              }
+              }
+              </style>
+            </custom-style>
+        <oe-date-range id='demo-2' label="Range"></oe-date-range>
+      </template>
+    </demo-snippet>
+
+    
+  </div>
+ 
+  <div class="vertical-section-container centered">
+<h3>Oe date range Element with Input date</h3>
+    <demo-snippet>
+      <template>
+        <dom-bind>
+          <template>
+              <custom-style>
+                  <style>
+                  #demo-3{
+                    --start-date-input:{
+                      width:180px;
+                    }
+                    --end-date-input:{
+                      width:180px;
+                    }
+                    --iron-icon-seperator:{
+                      padding-right: 80px;
+                  }
+                  }
+                  </style>
+                </custom-style>
+            <oe-input value="{{format}}" label="Enter Date Format"></oe-input>
+            <oe-date-range id='demo-3' label="Range" format="{{format}}" start-date="12/23/2008" end-date="11/22/2009"></oe-date-range>
+          </template>
+        </dom-bind>
+      </template>
+    </demo-snippet>
+</div>
+</html>
