@@ -28,7 +28,7 @@ install-deps:
     paths:
       - node_modules/
   tags:
-    - WCT_RUNNER
+    - CEP_RUNNER
 
 test-chrome:
   variables:
