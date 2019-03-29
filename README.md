@@ -6,6 +6,12 @@ The `startDate` and `endDate` is set by picking the date from `<oe-date-range-pi
 
 The date, format and label can be set using `start-date`,`end-date` and `format`,`label` attribute in the `<oe-date-range></oe-date-range>`
 
+Mixins are provided to adjust the width of `oe-input` element and provide paddings for icons.
+`--start-date-input`
+`--end-date-input`
+`--iron-icon-seperator`
+`--event-icon-input`
+
 ## Install the Polymer-CLI
 
 First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) and npm (packaged with [Node.js](https://nodejs.org)) installed. Run `npm install` to install your element's dependencies, then run `polymer serve` to serve your element locally.
