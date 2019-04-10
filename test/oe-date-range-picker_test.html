@@ -49,7 +49,7 @@
         expect(picker._activeYear).to.equal(today.getFullYear());
       });
       test('Date selected first will be set to startDate and the next will end Date', function () {
-        var date = picker.shadowRoot.querySelector('div').querySelectorAll('div#date');
+        var date = picker.shadowRoot.querySelectorAll('div.day:not(.title)');
        var start = date[12];
        MockInteractions.tap(start);
        var end = date[25];
@@ -58,7 +58,7 @@
        expect(picker.value.endDate.getDate()).to.equal(26);
       });
       test('Date selected first is greater than endDate, endDate will be set as startDate', function () {
-        var date = picker.shadowRoot.querySelector('div').querySelectorAll('div#date');
+        var date = picker.shadowRoot.querySelectorAll('div.day:not(.title)');
        var start = date[25];
        MockInteractions.tap(start);
        var end = date[21];
@@ -67,7 +67,7 @@
        expect(picker.value.endDate).to.equal(null);
       });
       test('end date should be greater than startDate to set the range', function () {
-        var date = picker.shadowRoot.querySelector('div').querySelectorAll('div#date');
+        var date = picker.shadowRoot.querySelectorAll('div.day:not(.title)');
        var start = date[25];
        MockInteractions.tap(start);
        var end = date[25];
