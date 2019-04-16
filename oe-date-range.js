@@ -59,6 +59,9 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
         --paper-input-container-underline-focus: {
           display: none;
         }
+        --paper-font-caption: {
+          display: none;
+        }
         --paper-input-container-color: #8a8989;
       }
      
