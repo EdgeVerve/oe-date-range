@@ -17,7 +17,7 @@
     "oe-utils": "git+http://evgit/oecloud.io/oe-utils.git#master"
   },
   "devDependencies": {
-    "@polymer/iron-demo-helpers": "3.0.2",
+    "@polymer/iron-demo-helpers": "3.1.0",
     "@webcomponents/webcomponentsjs": "2.2.7",
     "@polymer/iron-component-page": "4.0.1",
     "@polymer/iron-test-helpers": "3.0.1",

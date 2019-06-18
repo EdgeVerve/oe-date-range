@@ -49,7 +49,7 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
     return html`
     <style include="iron-flex iron-flex-alignment">
 
-      .bottomless {
+    .bottomless {
         --paper-input-container-underline: {
           display: none;
         }
@@ -62,9 +62,13 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
         --paper-font-caption: {
           display: none;
         }
+        /**--paper-input-container-shared-input-style:{
+          font-size: 15px;
+          width: 100%;
+        }**/
         --paper-input-container-color: #8a8989;
       }
-     
+      
       .foc:focus{
           color: #a69db3;
       } 

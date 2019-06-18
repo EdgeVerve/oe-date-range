@@ -77,6 +77,18 @@ class OeDateRangePicker extends OeDatePicker {
       this.prepareMonth(this._activeMonth, this._activeYear);
     }
   }
+  _canTabInOnCalendar(month, selected){
+    /* If selected date is not in current month we should allow tabbing into calendar */
+    var tabIndex = -1;
+    if(month && selected.startDate){
+        if(!selected || month.number !== selected.startDate.getUTCMonth() ||
+        month.year !== selected.startDate.getUTCFullYear()){
+        tabIndex = 0;
+      }
+    }
+    return tabIndex;
+  }
+
 
   _pickDate(e){
     var data = e.currentTarget.dataset;
