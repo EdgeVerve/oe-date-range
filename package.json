@@ -1,14 +1,20 @@
 {
   "name": "oe-date-range",
-  "description": "A template element , used to create oe-ui Polymer 3 elements",
+  "description": "A UI element to select a range of dates",
   "main": "oe-date-range.js",
+  "version": "2.0.0",
+  "scripts": {
+    "test": "polymer test --module-resolution node --skip-selenium-install",
+    "lint": "eslint .",
+    "doc": "polymer analyze *.js > analysis.json"
+  },
   "dependencies": {
-    "@polymer/iron-dropdown": "^3.0.1",
-    "@polymer/iron-icons": "^3.0.1",
-    "@polymer/paper-button": "^3.0.1",
-    "@polymer/paper-card": "^3.0.1",
-    "@polymer/paper-dialog": "^3.0.1",
-    "@polymer/paper-icon-button": "^3.0.2",
+    "@polymer/iron-dropdown": "3.0.1",
+    "@polymer/iron-icons": "3.0.1",
+    "@polymer/paper-button": "3.0.1",
+    "@polymer/paper-card": "3.0.1",
+    "@polymer/paper-dialog": "3.0.1",
+    "@polymer/paper-icon-button": "3.0.2",
     "@polymer/polymer": "3.1.0",
     "oe-date": "git+http://evgit/oecloud.io/oe-date.git#master",
     "oe-i18n-msg": "git+http://evgit/oecloud.io/oe-i18n-msg.git#master",
