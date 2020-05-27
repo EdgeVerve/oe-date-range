@@ -34,6 +34,7 @@ var OEUtils = window.OEUtils || {};
  * `--end-date-input` | width of endDate oe-input | 100%
  * `--iron-icon-seperator` | paading on seperator |  
  * `--event-icon-input` | padding on event icon |  
+ * `--oe-input-underline | underline to start date and end date | {}
  * 
  * @customElement
  * @polymer
@@ -49,9 +50,10 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
     return html`
     <style include="iron-flex iron-flex-alignment">
 
-      .bottomless {
+    .bottomless {
         --paper-input-container-underline: {
           display: none;
+          @apply --oe-input-underline;
         }
         --paper-input-container-underline-disabled: {
          display: none;
@@ -62,9 +64,14 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
         --paper-font-caption: {
           display: none;
         }
+        /**--paper-input-container-shared-input-style:{
+          font-size: 15px;
+          width: 100%;
+        }**/
         --paper-input-container-color: #8a8989;
+        
       }
-     
+      
       .foc:focus{
           color: #a69db3;
       } 
@@ -93,7 +100,6 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
     }
     </style>
     <div id="main" class="layout horizontal end">
-      
         <oe-input id="startdate" class="bottomless" label=[[label]] invalid=[[invalid]] error-message={{errorMessage}} placeholder=[[format]] value={{_formatDate(startDate)}} readonly>
         </oe-input>
         <iron-icon id="icon" class="margin point" tabindex="-1" icon="remove"></iron-icon>
@@ -126,12 +132,14 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
       startDate:{
         type:Object,
         value:null,
-        observer:'_computeStart'
+        observer:'_computeStart',
+        notify: true
       },
       endDate:{
         type:Object,
         value:null,
-        observer:'_computeEnd'
+        observer:'_computeEnd',
+        notify: true
       },
       format:{
         type: String,

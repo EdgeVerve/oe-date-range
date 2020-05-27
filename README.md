@@ -11,6 +11,7 @@ Mixins are provided to adjust the width of `oe-input` element and provide paddin
 `--end-date-input`
 `--iron-icon-seperator`
 `--event-icon-input`
+`--oe-input-underline`
 
 ## Install the Polymer-CLI
 
