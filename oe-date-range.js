@@ -132,12 +132,14 @@ class OeDateRange extends OECommonMixin(PolymerElement) {
       startDate:{
         type:Object,
         value:null,
-        observer:'_computeStart'
+        observer:'_computeStart',
+        notify: true
       },
       endDate:{
         type:Object,
         value:null,
-        observer:'_computeEnd'
+        observer:'_computeEnd',
+        notify: true
       },
       format:{
         type: String,
