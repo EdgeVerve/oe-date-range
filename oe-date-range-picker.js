@@ -42,6 +42,19 @@ class OeDateRangePicker extends OeDatePicker {
         color: var(--dp-selected-text);
         opacity:0.8;
         border-radius: 100%;
+        
+    }
+    .day {
+      outline: none;
+    }
+    .day.range-date{
+      @apply --oe-range-date; 
+    }
+    .day.end-date{
+      @apply --oe-end-date;
+    }
+    .day.start-date{
+      @apply --oe-start-date;
     }
     </style>
     ${super.template}
