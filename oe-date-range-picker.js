@@ -247,18 +247,22 @@ class OeDateRangePicker extends OeDatePicker {
         } else {
           
           // on ArrowLeft goto to one day before
+         
           if (e.code === "ArrowLeft") {
-            if(this.focusedDate){
-              debugger
-            }
-            else{
-              newFocusDate = new Date(
-                Date.UTC(startData.year, startData.month, startday - 1)
-              );
-              var temp = newFocusDate.getUTCDate().toString();
-              var currentDate = targetDiv.querySelector(`div[data-date="${temp}"]`);
-              currentDate && currentDate.focus();
-            }
+            newStartDate = new Date(
+              Date.UTC(startData.year, startData.month, startday - 1)
+            );
+            // if(this.focusedDate){
+            //   debugger
+            // }
+            // else{
+            //   newFocusDate = new Date(
+            //     Date.UTC(startData.year, startData.month, startday - 1)
+            //   );
+            //   var temp = newFocusDate.getUTCDate().toString();
+            //   var currentDate = targetDiv.querySelector(`div[data-date="${temp}"]`);
+            //   currentDate && currentDate.focus();
+            // }
            
           }
           // on ArrowUp goto same day previous week
