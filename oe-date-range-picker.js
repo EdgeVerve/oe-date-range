@@ -300,6 +300,9 @@ class OeDateRangePicker extends OeDatePicker {
      
   // },300);
   }
+  _doubleClick(e) {
+    
+  }
   _pickDate(e) {
     var data = e.currentTarget.dataset;
     if (data && data.date) {
