@@ -34,24 +34,30 @@
       <template>
         <custom-style>
           <style>
-            #demo-1 {
-              --start-date-input: {
-                width: 100px;
-              }
-              --end-date-input: {
-                width: 100px;
-              }
-              --iron-icon-seperator: {
-                padding-right: 15px;
-                padding-left: 15px;
-              }
-              --oe-input-underline: {
-                display: auto;
-              }
-            }
+           
+             
+              /* --oe-range-date: {
+                    margin: 0px;
+                    padding: 3px;
+                    background-color: #296969;
+                    opacity: 0.8;
+                  }
+                  --oe-start-date: {
+                    margin: 0px;
+                    padding: 3px;
+                    background-color: #296969;
+                    border-radius: 8px 0px 0px 8px;
+                  }
+                  --oe-end-date: {
+                    margin: 0px;
+                    padding: 3px;
+                    background-color: #296969;
+                    border-radius: 0px 8px 8px 0px;
+                  } */
+            
           </style>
         </custom-style>
-        <oe-date-range id='demo-1' dropdown-mode></oe-date-range>
+        <oe-date-range id='demo-1'></oe-date-range>
       </template>
     </demo-snippet>
 
@@ -63,18 +69,6 @@
       <template>
         <custom-style>
           <style>
-            #demo-2 {
-              --start-date-input: {
-                width: 100px;
-              }
-              --end-date-input: {
-                width: 100px;
-              }
-              --iron-icon-seperator: {
-                padding-right: 15px;
-                padding-left: 15px;
-              }
-            }
           </style>
         </custom-style>
         <oe-date-range id='demo-2' label="Range"></oe-date-range>
@@ -92,18 +86,10 @@
           <template>
             <custom-style>
               <style>
-                #demo-3 {
+               
 
 
-                  --start-date-input: {
-                    width: 180px;
-                  }
-                  --end-date-input: {
-                    width: 180px;
-                  }
-                  --iron-icon-seperator: {
-                    padding-right: 80px;
-                  }
+            
                   /* --oe-range-date: {
                     margin: 0px;
                     padding: 3px;
@@ -123,7 +109,7 @@
                     border-radius: 0px 8px 8px 0px;
                   } */
                  
-                }
+                
               </style>
             </custom-style>
             <oe-input value="{{format}}" label="Enter Date Format"></oe-input>

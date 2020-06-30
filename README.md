@@ -7,9 +7,7 @@ The `startDate` and `endDate` is set by picking the date from `<oe-date-range-pi
 The date, format and label can be set using `start-date`,`end-date` and `format`,`label` attribute in the `<oe-date-range></oe-date-range>`
 
 Mixins are provided to adjust the width of `oe-input` element and provide paddings for icons.
-`--start-date-input`
-`--end-date-input`
-`--iron-icon-seperator`
+`--range-date-input`
 `--event-icon-input`
 `--oe-input-underline`
 
