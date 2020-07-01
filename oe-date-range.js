@@ -60,18 +60,22 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
       .point{  
           pointer-events: none;
       }
-      .mar{
-      padding: 5px 5px 0 5px;
-        color: grey;
-   
-    margin-top: 15px;
-      }
+    
      
      #rangedate {
        width: 100%
       @apply --range-date-input;
     }
-   
+    .date-button:focus{
+      color: var(--paper-input-container-focus-color, --primary-color);
+    }
+    .suffix-btn {
+      color: var(--paper-input-container-color,  var(--secondary-text-color));
+      padding: 0;
+      margin: 0;
+      min-width: 0;
+      @apply --oe-date-suffix;
+    }
     #cal {
       @apply --event-icon-input;
     }
@@ -98,12 +102,15 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
         </paper-dialog>
             </template>
   </dom-if>
-    <div id="main" class="layout horizontal justified">
-        <oe-input id="rangedate" class="bottomless" tabindex="-1" label=[[label]] value={{_formatDate(startDate,endDate)}} required$=[[required]] readonly disabled=[[disabled]] placeholder=[[format]]-[[format]] validator=[[validator]] no-label-float=[[noLabelFloat]]
-        always-float-label="[[alwaysFloatLabel]]" invalid={{invalid}} error-message={{errorMessage}}></oe-input>
-       <paper-icon-button id="cal" on-click="_handleTap" icon="event" class="foc mar">
-       </paper-icon-button>
-       </div>
+   
+        <oe-input id="rangedate" class="bottomless" label=[[label]] value={{_formatDate(startDate,endDate)}} required$=[[required]] readonly disabled=[[disabled]] placeholder=[[format]]-[[format]] validator=[[validator]] no-label-float=[[noLabelFloat]]
+        always-float-label="[[alwaysFloatLabel]]" invalid={{invalid}} error-message={{errorMessage}}>
+      
+       <paper-button id="cal" aria-label="Select date from calendar" slot="suffix" class="suffix-btn date-button" on-tap="_handleTap">
+          <iron-icon icon="today"></iron-icon>
+        </paper-button>
+        </oe-input>
+     
        <dom-if if=[[_computeAttachDropdown(dropdownMode,dropdownAttached)]]>
        <template>
        <iron-dropdown id="dropdown" 
