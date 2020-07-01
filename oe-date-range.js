@@ -35,9 +35,7 @@ var OEUtils = window.OEUtils || {};
  * 
  * CSS Variable | Description | Default
  * ----------------|-------------|----------
- * `--start-date-input` | width of startDate oe-input | 100% 
- * `--end-date-input` | width of endDate oe-input | 100%
- * `--iron-icon-seperator` | paading on seperator |  
+ * `--range-date-input` | width of range oe-input | 100% 
  * `--event-icon-input` | padding on event icon |  
  * `--oe-input-underline | underline to start date and end date | {}
  * 
@@ -54,51 +52,29 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
   static get template() {
     return html`
     <style include="iron-flex iron-flex-alignment">
-
-    .bottomless {
-        --paper-input-container-underline: {
-          display: none;
-          @apply --oe-input-underline;
-        }
-        --paper-input-container-underline-disabled: {
-         display: none;
-        }
-        --paper-input-container-underline-focus: {
-          display: none;
-        }
-        --paper-font-caption: {
-          display: none;
-        }
-        /**--paper-input-container-shared-input-style:{
-          font-size: 15px;
-          width: 100%;
-        }**/
-        --paper-input-container-color: #8a8989;
-        
-      }
-      
+  
+   
       .foc:focus{
           color: #a69db3;
       } 
       .point{  
           pointer-events: none;
       }
-      .mar{
-        margin-bottom : 5px;
-        color: grey;
-      }
-     .margin{
-       margin-bottom : 10px;
-       color : #999;
-     }
-     #startdate {
-      @apply --start-date-input;
+    
+     
+     #rangedate {
+       width: 100%
+      @apply --range-date-input;
     }
-    #enddate {
-      @apply --end-date-input;
+    .date-button:focus{
+      color: var(--paper-input-container-focus-color, --primary-color);
     }
-    #icon {
-      @apply --iron-icon-seperator;
+    .suffix-btn {
+      color: var(--paper-input-container-color,  var(--secondary-text-color));
+      padding: 0;
+      margin: 0;
+      min-width: 0;
+      @apply --oe-date-suffix;
     }
     #cal {
       @apply --event-icon-input;
@@ -113,7 +89,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
     <paper-dialog aria-modal="true" modal id="dialog" opened={{expand}} on-keydown="_handleEscape" on-iron-overlay-opened="patchOverlay">
       
           <div class="vertical flex">
-          <oe-date-range-picker tabindex="-1" class="flex" value="{{localValue}}" locale="[[locale]]" start-of-week="[[startOfWeek]]"
+          <oe-date-range-picker class="flex" value="{{localValue}}" locale="[[locale]]" start-of-week="[[startOfWeek]]"
           disabled-days="[[disabledDays]]" holidays="[[holidays]]" 
             max=[[max]] min=[[min]]></oe-date-range-picker>
           
@@ -126,24 +102,24 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
         </paper-dialog>
             </template>
   </dom-if>
-    <div id="main" class="layout horizontal end">
-        <oe-input id="startdate" class="bottomless" label=[[label]] invalid=[[invalid]] error-message={{errorMessage}} placeholder=[[format]] value={{_formatDate(startDate)}} readonly>
+   
+        <oe-input id="rangedate" class="bottomless" label=[[label]] value={{_formatDate(startDate,endDate)}} required$=[[required]] readonly disabled=[[disabled]] placeholder=[[format]]-[[format]] validator=[[validator]] no-label-float=[[noLabelFloat]]
+        always-float-label="[[alwaysFloatLabel]]" invalid={{invalid}} error-message={{errorMessage}}>
+      
+       <paper-button id="cal" aria-label="Select date from calendar" slot="suffix" class="suffix-btn date-button" on-tap="_handleTap">
+          <iron-icon icon="today"></iron-icon>
+        </paper-button>
         </oe-input>
-        <iron-icon id="icon" class="margin point" tabindex="-1" icon="remove"></iron-icon>
-        <oe-input id="enddate"  class="bottomless" placeholder=[[format]] value={{_formatDate(endDate)}} readonly>
-       </oe-input>
-       <paper-icon-button id="cal" on-click="_handleTap" icon="event" class="foc mar">
-       </paper-icon-button>
-       </div>
+     
        <dom-if if=[[_computeAttachDropdown(dropdownMode,dropdownAttached)]]>
        <template>
        <iron-dropdown id="dropdown" 
        no-cancel-on-outside-click=[[openOnFocus]]
        no-animations horizontal-align="right" 
        vertical-align="{{verticalAlign}}" vertical-offset="{{verticalOffset}}"  no-auto-focus opened={{expand}}>
-           <paper-card tabindex="-1" slot="dropdown-content" class="dropdown-content layout vertical" disabled$="[[disabled]]">
+           <paper-card slot="dropdown-content" class="dropdown-content layout vertical" disabled$="[[disabled]]">
              <div class="vertical flex">
-             <oe-date-range-picker tabindex="-1" disable-initial-load class="flex" id="datePicker" value="{{localValue}}" locale="[[locale]]" start-of-week="[[startOfWeek]]"
+             <oe-date-range-picker disable-initial-load class="flex" id="datePicker" value="{{localValue}}" locale="[[locale]]" start-of-week="[[startOfWeek]]"
              disabled-days="[[disabledDays]]" holidays="[[holidays]]" 
                max=[[max]] min=[[min]]
                on-selection-double-click="_onOK"></oe-date-range-picker>
@@ -217,8 +193,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
   }
   connectedCallback() {
     super.connectedCallback();
-    this.$.startdate.addEventListener('focus', e => this._focusHandle(e));
-    this.$.enddate.addEventListener('focus', e => this._focusHandle(e));
+    this.$.rangedate.addEventListener('focus', e => this._focusHandle(e));
     this.addEventListener('blur', e => this._blurHandle(e));
     this.set('expand', false);
     if (!this.dropdownMode && this.openOnFocus) {
@@ -283,7 +258,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
           this.set('startDate',dateUTC);
         }
         else{
-          this.$.startdate.setValidity(false,'Invalid Start Date');
+          this.$.rangedate.setValidity(false,'Invalid Start Date');
         }      
     }
   }
@@ -302,7 +277,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
         this.set('endDate',dateUTC);
       }
       else{
-        this.$.enddate.setValidity(false,'Invalid End Date');
+        this.$.rangedate.setValidity(false,'Invalid End Date');
       }
     }
   }
@@ -328,17 +303,26 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
     }
   }
  
-  _formatDate(dateVal){
+  _formatDate(startdateVal,enddateValue){
     if(this.format === ''){
       this.format = 'DD/MM/YYYY';
     }
-    var result;
-    if(!dateVal){
-      result = null;
-    } else if(typeof dateVal === 'object'){
-      result = OEUtils.DateUtils.format(dateVal,this.format);
+    var resultStart,resultEnd,result;
+    if(!startdateVal && enddateValue){
+      resultStart= null;
+      resultEnd = null;
+    } else if(typeof startdateVal === 'object' && typeof enddateValue === 'object'){
+      resultStart = OEUtils.DateUtils.format(startdateVal,this.format);
+      resultEnd = OEUtils.DateUtils.format(enddateValue,this.format);
     } else {
-      result = dateVal;
+      resultStart = startdateVal;
+      resultEnd = enddateValue;
+    }
+    if(resultStart && resultEnd){
+      result =  resultStart +' - '+ resultEnd;
+    }
+    else{
+      result = null;
     }
     return result;
   }
