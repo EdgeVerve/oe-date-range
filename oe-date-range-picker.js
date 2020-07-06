@@ -76,55 +76,82 @@ class OeDateRangePicker extends OeDatePicker {
       },
       focusedDate: {
         type: Date,
-        observer:'_focusChanged'
-      }
+        observer: "_focusChanged",
+      },
+      /**
+       * Maximum selectable date
+       */
+      max: {
+        type: Date,
+        observer: "_renderCurrentMonth",
+      },
+
+      /**
+       * Minimum selectable date
+       */
+      min: {
+        type: Date,
+        observer: "_renderCurrentMonth",
+      },
     };
   }
   static get observer() {
     ["_valueChanged(value.*)"];
   }
   _valueChanged() {
-    if (typeof this.value.startDate == 'string' || this.value.startDate instanceof String) {
+    //this.set('focusedDate',undefined);
+    if (
+      typeof this.value.startDate == "string" ||
+      this.value.startDate instanceof String
+    ) {
       this.value.startDate = new Date(this.value);
       //we'll visit this function again this time with typeof(value)=Date
       return;
-  }
+    }
     if (this.value.startDate && !isNaN(this.value.startDate.getTime())) {
-      if (this._activeMonth != this.value.startDate.getUTCMonth() || this._activeYear != this.value.startDate.getUTCFullYear()) {
-          this._activeMonth = this.value.startDate.getUTCMonth();
-          this._activeYear = this.value.startDate.getUTCFullYear();
-          this.prepareMonth(this._activeMonth, this._activeYear);
+      if (
+        this._activeMonth != this.value.startDate.getUTCMonth() ||
+        this._activeYear != this.value.startDate.getUTCFullYear()
+      ) {
+        this._activeMonth = this.value.startDate.getUTCMonth();
+        this._activeYear = this.value.startDate.getUTCFullYear();
+        this.prepareMonth(this._activeMonth, this._activeYear);
       }
-  }
-    else {
-      if(this.value.startDate !== undefined){
-          var today = new Date();
-          this._activeMonth = today.getMonth();
-          this._activeYear = today.getFullYear();
-          this.prepareMonth(this._activeMonth, this._activeYear);
+    } else {
+      if (this.value.startDate !== undefined) {
+        var today = new Date();
+        this._activeMonth = today.getMonth();
+        this._activeYear = today.getFullYear();
+        this.prepareMonth(this._activeMonth, this._activeYear);
       }
+    }
   }
-  }
-  _focusChanged(){
-    if (typeof this.focusedDate == 'string' || this.focusedDate instanceof String) {
+  _focusChanged() {
+    if (
+      typeof this.focusedDate == "string" ||
+      this.focusedDate instanceof String
+    ) {
       this.focusedDate = new Date(this.focusedDate);
       //we'll visit this function again this time with typeof(value)=Date
       return;
-  }
-  if (this.focusedDate && !isNaN(this.focusedDate.getTime())) {
-      if (this._activeMonth != this.focusedDate.getUTCMonth() || this._activeYear != this.focusedDate.getUTCFullYear()) {
-          this._activeMonth = this.focusedDate.getUTCMonth();
-          this._activeYear = this.focusedDate.getUTCFullYear();
-          this.prepareMonth(this._activeMonth, this._activeYear);
+    }
+    if (this.focusedDate && !isNaN(this.focusedDate.getTime())) {
+      if (
+        this._activeMonth != this.focusedDate.getUTCMonth() ||
+        this._activeYear != this.focusedDate.getUTCFullYear()
+      ) {
+        this._activeMonth = this.focusedDate.getUTCMonth();
+        this._activeYear = this.focusedDate.getUTCFullYear();
+        this.prepareMonth(this._activeMonth, this._activeYear);
       }
-  } else {
-      if(this.focusedDate !== undefined){
-          var today = new Date();
-          this._activeMonth = today.getMonth();
-          this._activeYear = today.getFullYear();
-          this.prepareMonth(this._activeMonth, this._activeYear);
+    } else {
+      if (this.focusedDate !== undefined) {
+        var today = new Date();
+        this._activeMonth = today.getMonth();
+        this._activeYear = today.getFullYear();
+        this.prepareMonth(this._activeMonth, this._activeYear);
       }
-  }
+    }
   }
   _canTabInOnCalendar(month, selected) {
     /* If selected date is not in current month we should allow tabbing into calendar */
@@ -191,6 +218,7 @@ class OeDateRangePicker extends OeDatePicker {
     var newStartDate, newEndDate, newDate;
     var newFocusDate;
     var currentStartDate = targetDiv.querySelector("div.start-date");
+    var currentDate;
     var currentEndDate = targetDiv.querySelector("div.end-date");
     var startData = currentStartDate && currentStartDate.dataset;
     var endData = currentEndDate && currentEndDate.dataset;
@@ -222,48 +250,60 @@ class OeDateRangePicker extends OeDatePicker {
                 startDate: newStartDate,
                 endDate: newEndDate,
               });
-              this.fire("selection-double-click", this.getDetails(this.value.startDate));
+              this.fire(
+                "selection-double-click",
+                this.getDetails(this.value.startDate)
+              );
               e.preventDefault();
             }
-          }
-          else {
-            if(startData &&
+          } else {
+            if (
+              startData &&
               startData.date &&
               startData.month &&
-              startData.year){
-                newStartDate = new Date(
-                  Date.UTC(startData.year, startData.month, startData.date)
-                );
-                if (newStartDate) {
-                  this.set("value", {
-                    startDate: newStartDate,
-                    endDate: null,
-                  });
-                  //this.fire("selection-double-click", this.getDetails(this.value));
-                  e.preventDefault();
-                }
+              startData.year
+            ) {
+              newStartDate = new Date(
+                Date.UTC(startData.year, startData.month, startData.date)
+              );
+              if (newStartDate) {
+                this.set("value", {
+                  startDate: newStartDate,
+                  endDate: null,
+                });
+                //this.fire("selection-double-click", this.getDetails(this.value));
+                e.preventDefault();
               }
+            }
           }
         } else {
-          
+
           // on ArrowLeft goto to one day before
-         
+
           if (e.code === "ArrowLeft") {
             newStartDate = new Date(
               Date.UTC(startData.year, startData.month, startday - 1)
             );
-            // if(this.focusedDate){
-            //   debugger
-            // }
-            // else{
+            // if (this.focusedDate) {
+            //   newFocusDate = new Date(
+            //     Date.UTC(
+            //       this.focusedDate.getUTCFullYear(),
+            //       this.focusedDate.getMonth(),
+            //       this.focusedDate.getUTCDate() - 1
+            //     )
+            //   );
+            //   var temp = newFocusDate.getUTCDate().toString();
+            //   currentDate = targetDiv.querySelector(`div[data-date="${temp}"]`);
+            //   currentDate && currentDate.focus();
+            // } else {
             //   newFocusDate = new Date(
             //     Date.UTC(startData.year, startData.month, startday - 1)
             //   );
             //   var temp = newFocusDate.getUTCDate().toString();
-            //   var currentDate = targetDiv.querySelector(`div[data-date="${temp}"]`);
+            //   currentDate = targetDiv.querySelector(`div[data-date="${temp}"]`);
             //   currentDate && currentDate.focus();
             // }
-           
+            
           }
           // on ArrowUp goto same day previous week
           else if (e.code === "ArrowUp") {
@@ -273,38 +313,43 @@ class OeDateRangePicker extends OeDatePicker {
           }
           //on ArrowRight goto next day.
           else if (e.code === "ArrowRight") {
-            newStartDate = new Date(Date.UTC(startData.year, startData.month, startday + 1));
+            newStartDate = new Date(
+              Date.UTC(startData.year, startData.month, startday + 1)
+            );
           }
           //on ArrowDown goto next week same day.
           else if (e.code === "ArrowDown") {
-            newStartDate = new Date(Date.UTC(startData.year, startData.month, startday + 7));
+            newStartDate = new Date(
+              Date.UTC(startData.year, startData.month, startday + 7)
+            );
           }
           if (!this._isDateDisabled(newStartDate)) {
-            this.set('value', {startDate:newStartDate,endDate:newEndDate});
-            this.fire('selection-changed', this.getDetails(newStartDate));
+            this.set("focusedDate", undefined);
+            this.set("value", { startDate: newStartDate, endDate: newEndDate });
+            this.fire("selection-changed", this.getDetails(newStartDate));
             e.preventDefault();
-        }
-        if (!this._isDateDisabled(newFocusDate)) {
-          this.set('focusedDate', newFocusDate);
-         // this.fire('selection-changed', this.getDetails(newFocusDate));
-          e.preventDefault();
-      }
+          }
+          if (!this._isDateDisabled(newFocusDate)) {
+            this.set("focusedDate", newFocusDate);
+            // this.fire('selection-changed', this.getDetails(newFocusDate));
+            e.preventDefault();
+          }
         }
       }
     }
-  //   this.async(function(){
-  //     var currentStartDate = targetDiv.querySelector("div.start-date");
-  //     var currentEndDate = targetDiv.querySelector("div.end-date");
-  //     currentEndDate && currentEndDate.focus();
-  //     currentStartDate && currentStartDate.focus();
-     
-  // },300);
+    this.async(function () {
+      if (!this.focusedDate) {
+        var currentStartDate = targetDiv.querySelector("div.start-date");
+        var currentEndDate = targetDiv.querySelector("div.end-date");
+        currentEndDate && currentEndDate.focus();
+        currentStartDate && currentStartDate.focus();
+      }
+    }, 300);
   }
-  _doubleClick(e) {
-    
-  }
+  _doubleClick(e) {}
   _pickDate(e) {
     var data = e.currentTarget.dataset;
+    this.set("focusedDate", undefined);
     if (data && data.date) {
       var day = data.date;
       var month = data.month;
@@ -317,7 +362,7 @@ class OeDateRangePicker extends OeDatePicker {
             endDate: null,
           });
           this.fire("selection-changed", this.getDetails(this.value.startDate));
-        } else if (this.value.startDate && this.value.startDate < pickedDate) {
+        } else if (this.value.startDate && this.value.startDate < pickedDate && !this._isDateDisabled(this.value.startDate)) {
           this.set("value", {
             startDate: this.value.startDate,
             endDate: pickedDate,
@@ -343,17 +388,36 @@ class OeDateRangePicker extends OeDatePicker {
   _isDateDisabled(dateValue) {
     var disabled = false;
     var date = new Date(dateValue);
-
+    if (!disabled && this.min) {
+      disabled = dateValue < this.min;
+    }
+    if (!disabled && this.max) {
+      disabled = dateValue > this.max;
+    }
+    if (!disabled && this.disabledDays) {
+      disabled = (this.disabledDays.indexOf(date.getUTCDay()) >= 0);
+  }
     return disabled;
   }
   _getDateClass(day, month, selected) {
     var retClass = "";
     var date = new Date(Date.UTC(month.year, month.number, day.n));
-    var startUTC = selected.startDate && Date.UTC(selected.startDate.getUTCFullYear(),selected.startDate.getUTCMonth(),selected.startDate.getUTCDate());
-   
-      var endUTC = selected.endDate && Date.UTC(selected.endDate.getUTCFullYear(),selected.endDate.getUTCMonth(),selected.endDate.getUTCDate());
-    
-   
+    var startUTC =
+      selected.startDate &&
+      Date.UTC(
+        selected.startDate.getUTCFullYear(),
+        selected.startDate.getUTCMonth(),
+        selected.startDate.getUTCDate()
+      );
+
+    var endUTC =
+      selected.endDate &&
+      Date.UTC(
+        selected.endDate.getUTCFullYear(),
+        selected.endDate.getUTCMonth(),
+        selected.endDate.getUTCDate()
+      );
+
     if (
       selected.startDate &&
       selected.startDate.getUTCDate &&
@@ -382,6 +446,12 @@ class OeDateRangePicker extends OeDatePicker {
     }
 
     return retClass;
+  }
+  /**
+   * Renders the current month's days
+   */
+  _renderCurrentMonth() {
+    this.prepareMonth(this._activeMonth, this._activeYear);
   }
 }
 
