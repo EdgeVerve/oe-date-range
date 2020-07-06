@@ -11,7 +11,6 @@ import { PaperInputBehavior } from "@polymer/paper-input/paper-input-behavior.js
 import { IronFormElementBehavior } from "@polymer/iron-form-element-behavior/iron-form-element-behavior.js";
 import "oe-utils/date-utils.js";
 import { OEFieldMixin } from 'oe-mixins/oe-field-mixin';
-import { OEDateMixin } from "oe-date/oe-date-mixin.js";
 import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
 import "@polymer/iron-flex-layout/iron-flex-layout";
 import '@polymer/polymer/lib/elements/dom-if.js';
@@ -241,6 +240,70 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
     this.dialogAttached = false;
     this.dropdownAttached = false;
   }
+   /**
+     * Converts the user shortHand inputs to Date values.
+     * computes values for 'today' , 3y , -7M etc.
+     * @param {string} input input shortHand string
+     * @return {Date} parsed Date value
+     */
+    _parseShorthand(input) {
+      if (!input || input.trim().length === 0) {
+        return undefined;
+      }
+      var tuInput = input.trim().toUpperCase();
+
+      var retDate;
+
+      var mDate = this._resolveReferenceDate(this.referenceDate, this.referenceTimezone);
+
+      if (tuInput === 'T' || tuInput === 'TOD' || tuInput === 'TODAY') {
+        retDate = mDate;
+      } else if (tuInput == 'TOM') {
+        retDate = mDate.setUTCDate(mDate.getUTCDate() + 1);
+      } else if (tuInput[tuInput.length - 1] === 'D') {
+        retDate = this._calcDate(mDate, tuInput, 'days');
+      } else if (tuInput[tuInput.length - 1] === 'W') {
+        retDate = this._calcDate(mDate, tuInput, 'weeks');
+      } else if (tuInput[tuInput.length - 1] === 'M') {
+        retDate = this._calcDate(mDate, tuInput, 'months');
+      } else if (tuInput[tuInput.length - 1] === 'Q') {
+        retDate = this._calcDate(mDate, tuInput, 'quarters');
+      } else if (tuInput[tuInput.length - 1] === 'Y') {
+        retDate = this._calcDate(mDate, tuInput, 'years');
+      } else {
+        retDate = OEUtils.DateUtils.parse(tuInput, this.format);
+      }
+
+      return retDate;
+    }
+    _resolveReferenceDate(refDate, refTZ){
+      let rDate;
+      
+      if(refDate && typeof refDate.getTime === 'function'){
+        rDate = refDate;
+      } else {
+        // If referenceDate is NOT specified,
+        // reference for date calculation is today in user's TZ (represented as UTC00:00).
+        // i.e. At 02:30 AM IST on 5th-Nov-2019. 
+        //      The reference date is 2019-11-05 00:00:00Z
+        // At the same moment, person sitting in PST (GMT -7:00) sees 
+        //      current date and time as 2019-11-04 14:00 PM.
+        //      For her the reference date would be 2019-11-04 00:00:00Z
+        // 
+        // If referenceTimezone is specified
+        //      Reference date is current-date in biz-TZ (with time set to UTC00:00)
+        //      i.e. setting referenceTimezone = -420 (minutes) means 
+        //      users in anytimezone will see the reference date to be (2019-11-04 00:00:00Z)
+        rDate = new Date();
+    
+        /* If reference timezone offset is specified, arrive date in that timezone */
+        if(typeof refTZ === 'number') {
+          rDate.setMinutes(rDate.getMinutes() + (refTZ +((new Date()).getTimezoneOffset())));
+        }
+      }
+      rDate = new Date(Date.UTC(rDate.getFullYear(), rDate.getMonth(), rDate.getDate()));
+      return rDate;
+    }
   _getPlaceholder(format){
     return format+' - '+format;
   }
@@ -412,4 +475,4 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
   }
 
 }
-window.customElements.define(OeDateRange.is, OEDateMixin(OEFieldMixin(OeDateRange)));
+window.customElements.define(OeDateRange.is, OEFieldMixin(OeDateRange));
