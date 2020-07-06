@@ -62,7 +62,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
       }
     
      
-     #rangedate {
+     #display {
        width: 100%
       @apply --range-date-input;
     }
@@ -103,7 +103,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
             </template>
   </dom-if>
    
-        <oe-input id="rangedate" class="bottomless" label=[[label]] value={{_formatDate(startDate,endDate)}} required$=[[required]] readonly disabled=[[disabled]] placeholder=[[format]]-[[format]] validator=[[validator]] no-label-float=[[noLabelFloat]]
+        <oe-input id="display" class="bottomless" label=[[label]] value={{_formatDate(startDate,endDate)}} required$=[[required]] readonly disabled=[[disabled]] placeholder=[[_getPlaceholder(format)]] validator=[[validator]] no-label-float=[[noLabelFloat]]
         always-float-label="[[alwaysFloatLabel]]" invalid={{invalid}} error-message={{errorMessage}}>
       
        <paper-button id="cal" aria-label="Select date from calendar" slot="suffix" class="suffix-btn date-button" on-tap="_handleTap">
@@ -163,8 +163,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
         value: false
       },
       format:{
-        type: String,
-        value: 'DD/MM/YYYY'
+        type: String
       },
         /**
        * Setting to true makes the datepicker open as a dropdown instead of a dialog
@@ -188,14 +187,45 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
         type: String,
         value: 'top'
       },
+        /**
+       * Maximum allowed date (accepts date shorthands)
+       */
+      max: {
+        type: Object,
+        observer: '_maxChanged'
+      },
+
+      /**
+       * Minimum allowed date (accepts date shorthands)
+       */
+      min: {
+        type: Object,
+        observer: '_minChanged'
+      }
 
     };
   }
   connectedCallback() {
     super.connectedCallback();
-    this.$.rangedate.addEventListener('focus', e => this._focusHandle(e));
+    this.$.display.addEventListener('focus', e => this._focusHandle(e));
     this.addEventListener('blur', e => this._blurHandle(e));
     this.set('expand', false);
+    if (this.max && typeof this.max === 'string') {
+      var newDate = this._parseShorthand(this.max);
+      if (newDate) {
+        this.set('max', newDate);
+      } else {
+        console.warn("Invalid 'max' date value", this.max);
+      }
+    }
+    if (this.min && typeof this.max === 'string') {
+      var newDate = this._parseShorthand(this.min); // eslint-disable-line no-redeclare
+      if (newDate) {
+        this.set('min', newDate);
+      } else {
+        console.warn("Invalid 'min' date value", this.min);
+      }
+    }
     if (!this.dropdownMode && this.openOnFocus) {
       console.warn("open-on-focus is only available in dropdown-mode.");
     }
@@ -209,6 +239,73 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
     super();
     this.dialogAttached = false;
     this.dropdownAttached = false;
+  }
+   /**
+     * Converts the user shortHand inputs to Date values.
+     * computes values for 'today' , 3y , -7M etc.
+     * @param {string} input input shortHand string
+     * @return {Date} parsed Date value
+     */
+    _parseShorthand(input) {
+      if (!input || input.trim().length === 0) {
+        return undefined;
+      }
+      var tuInput = input.trim().toUpperCase();
+
+      var retDate;
+
+      var mDate = this._resolveReferenceDate(this.referenceDate, this.referenceTimezone);
+
+      if (tuInput === 'T' || tuInput === 'TOD' || tuInput === 'TODAY') {
+        retDate = mDate;
+      } else if (tuInput == 'TOM') {
+        retDate = mDate.setUTCDate(mDate.getUTCDate() + 1);
+      } else if (tuInput[tuInput.length - 1] === 'D') {
+        retDate = this._calcDate(mDate, tuInput, 'days');
+      } else if (tuInput[tuInput.length - 1] === 'W') {
+        retDate = this._calcDate(mDate, tuInput, 'weeks');
+      } else if (tuInput[tuInput.length - 1] === 'M') {
+        retDate = this._calcDate(mDate, tuInput, 'months');
+      } else if (tuInput[tuInput.length - 1] === 'Q') {
+        retDate = this._calcDate(mDate, tuInput, 'quarters');
+      } else if (tuInput[tuInput.length - 1] === 'Y') {
+        retDate = this._calcDate(mDate, tuInput, 'years');
+      } else {
+        retDate = OEUtils.DateUtils.parse(tuInput, this.format);
+      }
+
+      return retDate;
+    }
+    _resolveReferenceDate(refDate, refTZ){
+      let rDate;
+      
+      if(refDate && typeof refDate.getTime === 'function'){
+        rDate = refDate;
+      } else {
+        // If referenceDate is NOT specified,
+        // reference for date calculation is today in user's TZ (represented as UTC00:00).
+        // i.e. At 02:30 AM IST on 5th-Nov-2019. 
+        //      The reference date is 2019-11-05 00:00:00Z
+        // At the same moment, person sitting in PST (GMT -7:00) sees 
+        //      current date and time as 2019-11-04 14:00 PM.
+        //      For her the reference date would be 2019-11-04 00:00:00Z
+        // 
+        // If referenceTimezone is specified
+        //      Reference date is current-date in biz-TZ (with time set to UTC00:00)
+        //      i.e. setting referenceTimezone = -420 (minutes) means 
+        //      users in anytimezone will see the reference date to be (2019-11-04 00:00:00Z)
+        rDate = new Date();
+    
+        /* If reference timezone offset is specified, arrive date in that timezone */
+        if(typeof refTZ === 'number') {
+          rDate.setMinutes(rDate.getMinutes() + (refTZ +((new Date()).getTimezoneOffset())));
+        }
+      }
+      rDate = new Date(Date.UTC(rDate.getFullYear(), rDate.getMonth(), rDate.getDate()));
+      return rDate;
+    }
+  _getPlaceholder(format){
+    return format+' - '+format;
   }
   _focusHandle(e) { // eslint-disable-line no-unused-vars
     if (this.openOnFocus && this.dropdownMode && !this.expand) {
@@ -258,7 +355,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
           this.set('startDate',dateUTC);
         }
         else{
-          this.$.rangedate.setValidity(false,'Invalid Start Date');
+          this.$.display.setValidity(false,'Invalid Start Date');
         }      
     }
   }
@@ -277,7 +374,7 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
         this.set('endDate',dateUTC);
       }
       else{
-        this.$.rangedate.setValidity(false,'Invalid End Date');
+        this.$.display.setValidity(false,'Invalid End Date');
       }
     }
   }
@@ -304,9 +401,6 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
   }
  
   _formatDate(startdateVal,enddateValue){
-    if(this.format === ''){
-      this.format = 'DD/MM/YYYY';
-    }
     var resultStart,resultEnd,result;
     if(!startdateVal && enddateValue){
       resultStart= null;
@@ -348,5 +442,37 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
       e.target.parentNode.insertBefore(e.target._backdrop || e.target.backdropElement, e.target);
     }
   }
+  /**
+   * Parses the shorthand for "max" and validates the value.
+   * @param {Object} newMax 
+   */
+  _maxChanged(newMax) {
+    if (newMax && typeof newMax === 'string') {
+      var newDate = this._parseShorthand(newMax);
+      if (newDate) {
+        this.set('max', newDate);
+        this.value && this.validate();
+      } else {
+        console.warn("Invalid 'max' date value", this.max);
+      }
+    }
+  }
+
+  /**
+   * Parses the shorthand for "min" and validates the value.
+   * @param {Object} newMin 
+   */
+  _minChanged(newMin) {
+    if (newMin && typeof newMin === 'string') {
+      var newDate = this._parseShorthand(newMin);
+      if (newDate) {
+        this.set('min', newDate);
+        this.value && this.validate();
+      } else {
+        console.warn("Invalid 'min' date value", this.max);
+      }
+    }
+  }
+
 }
 window.customElements.define(OeDateRange.is, OEFieldMixin(OeDateRange));
