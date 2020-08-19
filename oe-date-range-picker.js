@@ -28,19 +28,17 @@ class OeDateRangePicker extends OeDatePicker {
     return html`
       <style>
         .day.start-date span {
-          background-color: #296969;
+          background-color: #1565c0;
           color: var(--dp-selected-text);
           border-radius: 100%;
         }
         .day.end-date span {
-          background-color: #296969;
+          background-color: #1565c0;
           color: var(--dp-selected-text);
           border-radius: 100%;
         }
         .day.range-date span {
-          background-color: #296969;
-          color: var(--dp-selected-text);
-          opacity: 0.8;
+          background-color: #d4e0ef;
           border-radius: 100%;
         }
        

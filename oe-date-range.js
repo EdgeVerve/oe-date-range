@@ -83,18 +83,63 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
       min-height: 340px;
       min-width: 300px;
     }
+    .header {
+      background-color: blue;
+      height: 80px;
+      margin-top: 0px;
+    }
+    .picker {
+      margin: 0px;
+      padding: 12px;
+    }
+    .year {
+      color: #ddddf9;
+      padding: 5px 0px;
+      font-size: 12px;
+    }
+    .start-month-date,
+    .end-month-date{
+      padding: 5px 0px;
+      font-size: 25px;
+      color: #d4e0ef;
+      font-weight: 600;
+    }
+    .seperator{
+      border-top: 1px solid;
+      border-right: 1px solid;
+      width: 44px;
+      height: 44px;
+      margin: 17px 17px 0 0;
+      transform: rotate(32deg) matrix(1, 0.5, 0, 1,0, 1);
+      color: #ddddf9;
+    }
+    paper-button {
+      color: #1565c0;
+      font-weight: 500;
+    }
     </style>
     <dom-if if=[[_computeAttachDialog(dropdownMode,dialogAttached)]]>
     <template>
     <paper-dialog aria-modal="true" modal id="dialog" opened={{expand}} on-keydown="_handleEscape" on-iron-overlay-opened="patchOverlay">
-      
-          <div class="vertical flex">
+    <template is="dom-if" if=[[_dateSelected(startDate,endDate)]]>
+    <div class="header horizontal layout justified">
+    <div class="date-range layout vertical">
+    <div class="year">[[getYear(startDate)]]</div>
+    <div class="start-month-date">[[getDayMonth(startDate)]]</div>
+    </div>
+    <div class="seperator"></div>
+    <div class="date-range layout vertical">
+    <div class="year">[[getYear(endDate)]]</div>
+    <div class="start-month-date">[[getDayMonth(endDate)]]</div>
+    </div>
+    </div>
+    </template>
+          <div class="picker vertical flex">
           <oe-date-range-picker class="flex" value="{{localValue}}" locale="[[locale]]" start-of-week="[[startOfWeek]]"
           disabled-days="[[disabledDays]]" holidays="[[holidays]]" 
             max=[[max]] min=[[min]]></oe-date-range-picker>
           
-            <div class="layout horizontal">
-            <div class="layout flex"></div>
+            <div class="layout horizontal center-center">
             <paper-button id="cancelBtn" on-tap="_onCancel">Cancel</paper-button>
             <paper-button id="okBtn" on-tap="_onOK" disabled=[[!localValue.endDate]]>OK</paper-button>
           </div>
@@ -105,7 +150,9 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
    
         <oe-input id="display" class="bottomless" label=[[label]] value={{_formatDate(startDate,endDate)}} required$=[[required]] readonly disabled=[[disabled]] placeholder=[[_getPlaceholder(format)]] validator=[[validator]] no-label-float=[[noLabelFloat]]
         always-float-label="[[alwaysFloatLabel]]" invalid={{invalid}} error-message={{errorMessage}}>
-      
+        <paper-button aria-label="clear date from calendar" hidden$=[[!disableTextInput]] slot="suffix" class="suffix-btn" on-tap="_clearDate">
+        <iron-icon icon="clear"></iron-icon>
+      </paper-button>
        <paper-button id="cal" aria-label="Select date from calendar" slot="suffix" class="suffix-btn date-button" on-tap="_handleTap">
           <iron-icon icon="today"></iron-icon>
         </paper-button>
@@ -205,6 +252,25 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
 
     };
   }
+  _dateSelected(start,end){
+    return (start && end) && (typeof start === 'object' && typeof start === 'object') ? true : false;
+  }
+  getYear(date){
+    
+      let year = date.getUTCFullYear();
+     return year;
+    
+  }
+  getDayMonth(date){
+    
+    var months = new Array('January', 'February', 'March',
+    'April', 'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December');
+    let month = months[date.getUTCMonth()].substring(0,3);
+    let day = date.getUTCDate();
+    return month + ' ' + day;
+  
+}
   connectedCallback() {
     super.connectedCallback();
     this.$.display.addEventListener('focus', e => this._focusHandle(e));
@@ -230,6 +296,13 @@ class OeDateRange extends OECommonMixin(mixinBehaviors([IronFormElementBehavior,
       console.warn("open-on-focus is only available in dropdown-mode.");
     }
   }
+    /**
+     * Clear the date value entered 
+     */
+    _clearDate() {
+      this.startDate = undefined;
+      this.endDate = undefined;
+    }
   _handleEscape(e){
     if(e.key === 'Escape' || e.keyCode === 27){
       this._onCancel();
