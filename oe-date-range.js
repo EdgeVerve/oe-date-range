@@ -127,10 +127,12 @@ class OeDateRange extends OECommonMixin(
           @apply --oe-input-date;
         }
         .sdate-range{
-          padding: 0px 20px;
+          padding: 0px 10px;
+          min-width: 85px;
         }
         .edate-range{
-          padding: 0 10px;
+          padding: 0px 10px;
+          min-width: 85px;
         }
       </style>
       <dom-if if="[[_computeAttachDialog(dropdownMode,dialogAttached)]]">
@@ -402,6 +404,7 @@ class OeDateRange extends OECommonMixin(
   }
   connectedCallback() {
     super.connectedCallback();
+    this.set('pickerSdate',new Date());
     this.addEventListener('selection-changed',function(event){
       if(this.localValue.startDate && !this.localValue.endDate){
         this.set('pickerSdate',this.localValue.startDate);
@@ -440,6 +443,8 @@ class OeDateRange extends OECommonMixin(
   _clearDate() {
     this.startDate = undefined;
     this.endDate = undefined;
+    this.pickerSdate = new Date();
+    this.pickerEdate = undefined;
     this.set("localValue", {
       startDate: new Date(),
       endDate: this.endDate,
