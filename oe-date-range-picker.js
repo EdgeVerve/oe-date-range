@@ -28,19 +28,17 @@ class OeDateRangePicker extends OeDatePicker {
     return html`
       <style>
         .day.start-date span {
-          background-color: #296969;
+          background-color: #1565c0;
           color: var(--dp-selected-text);
           border-radius: 100%;
         }
         .day.end-date span {
-          background-color: #296969;
+          background-color: #1565c0;
           color: var(--dp-selected-text);
           border-radius: 100%;
         }
         .day.range-date span {
-          background-color: #296969;
-          color: var(--dp-selected-text);
-          opacity: 0.8;
+          background-color: #d4e0ef;
           border-radius: 100%;
         }
        
@@ -195,6 +193,13 @@ class OeDateRangePicker extends OeDatePicker {
     ) {
       tabIndex = 0;
     }
+    else if( selected.endDate &&
+      selected.endDate.getUTCDate &&
+      day.n === selected.endDate.getUTCDate() &&
+      month.number == selected.endDate.getUTCMonth() &&
+      month.year === selected.endDate.getUTCFullYear()){
+        tabIndex = 0;
+      }
     return tabIndex;
   }
   _handleDateArrowNavigation(e) {
@@ -292,8 +297,10 @@ class OeDateRangePicker extends OeDatePicker {
             //       this.focusedDate.getUTCDate() - 1
             //     )
             //   );
-            //   var temp = newFocusDate.getUTCDate().toString();
-            //   currentDate = targetDiv.querySelector(`div[data-date="${temp}"]`);
+            //   var tempdate = newFocusDate.getUTCDate().toString();
+            //   var tempmonth = newFocusDate.getUTCMonth().toString();
+            //   var tempyear = newFocusDate.getUTCFullYear().toString();
+            //   currentDate = targetDiv.querySelector(`div[data-date="${tempdate}"][data-month="${tempmonth}"][data-year="${tempyear}"]`);
             //   currentDate && currentDate.focus();
             // } else {
             //   newFocusDate = new Date(
